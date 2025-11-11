@@ -11,6 +11,12 @@ const bookRoutes = require('./src/routes/book.routes');
 
 const app = express()
 
+app.use(cors({
+  origin: ["http://localhost:3000", "https://akaraaka.vercel.app/"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}))
+
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/categories', categoryRoutes)
 app.use('/api/v1/books', bookRoutes)
