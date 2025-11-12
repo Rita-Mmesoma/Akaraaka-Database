@@ -52,15 +52,15 @@ exports.login = async (req, res, next) => {
         }
 
         const token = signToken(user)
-        res.json({
-            token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email,
-                role: user.role,
-            }
-        })
+        // res.json({
+        //     token,
+        //     user: {
+        //         id: user._id,
+        //         name: user.name,
+        //         email,
+        //         role: user.role,
+        //     }
+        // })
 
         return res.status(200).json({
         success: true,
