@@ -1,9 +1,9 @@
-exports.isAdmin = () =>{
-    if(req.user?.role !== 'admin') return resizeBy.status(403).json({message: 'Admin only'})
+exports.isAdmin = (req, res, next) =>{
+    if(req.user?.role !== 'admin') return res.status(403).json({message: 'Admin only'})
     next()
 }
 
-exports.isUser = () =>{
-    if(req.user?.role !== 'user') return resizeBy.status(403).json({message: 'Admin only'})
+exports.isUser = (req, res, next) =>{
+    if(req.user?.role !== 'user') return res.status(403).json({message: 'Admin only'})
     next()
 }
