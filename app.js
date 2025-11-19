@@ -12,9 +12,10 @@ const bookRoutes = require('./src/routes/book.routes');
 const app = express()
 
 app.use(cors({
-  origin: ["http://localhost:3000", "https://akaraaka.vercel.app/"],
+  origin: ["http://localhost:3000", "https://akaraaka.vercel.app"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
 }))
 //Handle preflight requests
 // app.options("*", cors());
