@@ -8,6 +8,7 @@ exports.createBook = async (req, res, next) => {
     }catch(err){
         console.log('createBook book.controller', err)
         next(err)
+        res.status(500).json({error: err.message || 'Failed to create book'})
     }
 }
 
