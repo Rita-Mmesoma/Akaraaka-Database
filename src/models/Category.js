@@ -15,13 +15,6 @@ const categorySchema = new mongoose.Schema(
             lowercase: true,
             trim: true,
         },
-        // email: {
-        //     type: String, 
-        //     unique: true, 
-        //     required: true, 
-        //     lowercase: true, 
-        //     trim: true,
-        // },
         description: {
             type: String,
             default: '',
