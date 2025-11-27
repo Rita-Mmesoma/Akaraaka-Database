@@ -8,13 +8,20 @@ const categorySchema = new mongoose.Schema(
             unique: true,
             trim:true,
         },
-        email: {
-            type: String, 
-            unique: true, 
-            required: true, 
-            lowercase: true, 
+        slug: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
             trim: true,
         },
+        // email: {
+        //     type: String, 
+        //     unique: true, 
+        //     required: true, 
+        //     lowercase: true, 
+        //     trim: true,
+        // },
         description: {
             type: String,
             default: '',
