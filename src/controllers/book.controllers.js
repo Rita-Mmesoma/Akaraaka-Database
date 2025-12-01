@@ -3,7 +3,20 @@ const { applyAPIFeatures } = require('../utils/apiFeatures')
 
 exports.createBook = async (req, res, next) => {
     try{
-        const book = await Book.create(req.body)
+        const { title, author, description, category, stock} = req.body
+        const coverUrl = req.file?.path
+        
+        if(!coverUrl){
+            return res.status(400).json({message: 'Cover image required'})
+        }
+        const book = await Book.create({
+            title,
+            author,
+            description,
+            category,
+            stock,
+            cover: coverUrl,
+        })
         res.status(201).json(book)
     }catch(err){
         console.log('createBook book.controller', err)
