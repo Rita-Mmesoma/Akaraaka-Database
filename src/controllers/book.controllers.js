@@ -53,7 +53,8 @@ exports.deleteBook = async (req, res, next) =>{
 
 exports.getBooks = async (req, res, next) =>{
     try{
-        const { search, category, page, limit } = req.query
+        const limit = 100
+        const { search, category, page } = req.query
         const { filter, skip, limit:lim } = applyAPIFeatures(null, {search, category, page, limit})
 
         let baseFilter = filter
