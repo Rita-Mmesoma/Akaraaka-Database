@@ -25,18 +25,56 @@ exports.createBook = async (req, res, next) => {
     }
 }
 
+// exports.updateBook = async (req, res, next) => {
+//     try{
+//         const updated = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true })
+//         if(!updated){
+//             return res.status(404).json({ message: 'Not found' })
+//         }
+//         res.json(updated)
+//     }catch(err){
+//         console.log('updateBook book.controller', err)
+//         next(err)
+//     }
+// }
 exports.updateBook = async (req, res, next) => {
-    try{
-        const updated = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true })
-        if(!updated){
-            return res.status(404).json({ message: 'Not found' })
+    try {
+        const bookId = req.params.id;
+
+        // Find the existing book first
+        const book = await Book.findById(bookId);
+        if (!book) {
+            return res.status(404).json({ message: "Book not found" });
         }
-        res.json(updated)
-    }catch(err){
-        console.log('updateBook book.controller', err)
-        next(err)
+
+        // Prepare update data
+        const updateData = {
+            title: req.body.title || book.title,
+            author: req.body.author || book.author,
+            category: req.body.category || book.category,
+            stock: req.body.stock || book.stock,
+            description: req.body.description || book.description,
+        };
+
+        if (req.file) {
+            updateData.cover = req.file.path;
+        }
+
+        // Update the book
+        const updatedBook = await Book.findByIdAndUpdate(
+            bookId,
+            updateData,
+            { new: true }
+        );
+
+        res.json(updatedBook);
+
+    } catch (err) {
+        console.error("updateBook error:", err);
+        next(err);
     }
-}
+};
+
 
 exports.deleteBook = async (req, res, next) =>{
     try{
