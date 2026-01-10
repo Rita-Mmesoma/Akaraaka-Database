@@ -51,7 +51,7 @@ exports.updateBook = async (req, res, next) => {
         const updateData = {
             title: req.body.title || book.title,
             author: req.body.author || book.author,
-            category: req.body.category || book.category,
+            // category: req.body.category || book.category,
             stock: req.body.stock || book.stock,
             description: req.body.description || book.description,
         };
