@@ -14,7 +14,7 @@ const borrowSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ['borrowed', 'retured', 'overdue'],
+            enum: ['borrowed', 'returned', 'overdue'],
         },
         dueDate: {
             type: Date

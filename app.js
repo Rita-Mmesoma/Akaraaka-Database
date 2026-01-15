@@ -8,6 +8,7 @@ const connectDB = require('./src/db/connect')
 const authRoutes = require('./src/routes/auth.routes');
 const categoryRoutes = require('./src/routes/category.routes');
 const bookRoutes = require('./src/routes/book.routes');
+const borrowRoutes = require('./routes/borrow');
 
 const app = express()
 
@@ -26,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/categories', categoryRoutes)
 app.use('/api/v1/books', bookRoutes)
+app.use('/api/v1/borrows', borrowRoutes)
 
 app.use((req, res)=> {
     res.status(404).json({ message: 'Not found'})
