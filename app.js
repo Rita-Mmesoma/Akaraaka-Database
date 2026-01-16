@@ -8,7 +8,7 @@ const connectDB = require('./src/db/connect')
 const authRoutes = require('./src/routes/auth.routes');
 const categoryRoutes = require('./src/routes/category.routes');
 const bookRoutes = require('./src/routes/book.routes');
-const borrowRoutes = require('./routes/borrow.routes');
+const borrowRoutes = require('./src/routes/borrow.routes');
 
 const app = express()
 
