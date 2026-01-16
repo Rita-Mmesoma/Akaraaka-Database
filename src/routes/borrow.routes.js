@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { protect } = require('../middleware/auth');
-const ctrl = require('../controllers/borrow.controller');
+const ctrl = require('../controllers/borrow.controllers');
 
 // All borrow routes should be protected (User must be logged in)
 router.use(protect); 
