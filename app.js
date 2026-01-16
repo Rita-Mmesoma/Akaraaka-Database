@@ -14,7 +14,7 @@ const app = express()
 
 app.use(cors({
   origin: ["http://localhost:3000", "https://akaraaka.vercel.app"],
-  methods: ["GET", "POST", "PATCH", "DELETE"],
+  methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 }))
