@@ -12,6 +12,8 @@ exports.borrowBook = async (req, res, next) => {
 
         console.log("Debug - Extracted User ID:", userId); // Check your terminal for this!
 
+        const { bookId } = req.body;
+
         // STOP if we can't find an ID
         if (!userId) {
             return res.status(401).json({ 
