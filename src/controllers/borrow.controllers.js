@@ -4,8 +4,20 @@ const Book = require('../models/Book');     // Need this to update stock
 // --- 1. BORROW A BOOK ---
 exports.borrowBook = async (req, res, next) => {
     try {
-        const userId = req.user.id; // Comes from your auth middleware
-        const { bookId } = req.body; // We expect the Frontend to send { bookId: "..." }
+        // const userId = req.user._id;
+        // const { bookId } = req.body;
+
+        const userObj = req.user || {};
+        const userId = userObj._id || userObj.id || userObj.userId;
+
+        console.log("Debug - Extracted User ID:", userId); // Check your terminal for this!
+
+        // STOP if we can't find an ID
+        if (!userId) {
+            return res.status(401).json({ 
+                message: "User Authentication Failed: No User ID found in request." 
+            });
+        }
 
         // 1. Check if Book Exists
         const book = await Book.findById(bookId);
@@ -66,7 +78,7 @@ exports.borrowBook = async (req, res, next) => {
 exports.returnBook = async (req, res, next) => {
     try {
         const { borrowId } = req.body; // Expecting { borrowId: "..." }
-        const userId = req.user.id;
+        const userId = req.user._id;
 
         // 1. Find the Borrow Record
         const borrowRecord = await Borrow.findById(borrowId);
@@ -108,7 +120,7 @@ exports.returnBook = async (req, res, next) => {
 // --- 3. GET USER'S BORROW HISTORY ---
 exports.getMyBorrows = async (req, res, next) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         
         const borrows = await Borrow.find({ user: userId })
             .populate('book', 'title author cover') // Fetch book details nicely
