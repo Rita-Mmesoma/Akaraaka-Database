@@ -1,6 +1,7 @@
 const router = require('express').Router();
-const { protect } = require('../middleware/auth');
+const { protect, adminOnly } = require('../middleware/auth');
 const ctrl = require('../controllers/borrow.controllers');
+const borrowController = require('../controllers/borrow.controllers')
 
 router.use(protect); 
 
