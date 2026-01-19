@@ -98,20 +98,15 @@ exports.returnBook = async (req, res, next) => {
             return res.status(400).json({ message: "This book has already been returned" });
         }
 
-        // 2. Update Status to Returned
-        borrowRecord.status = 'returned';
-        // Optional: Record actual return date here if your schema supports it
-
-        // 3. Find the Book and Increase Stock
-        const book = await Book.findById(borrowRecord.book);
-        if (book) {
-            book.stock += 1;
-            await book.save();
+        if (borrowRecord.status === 'pending') {
+            return res.status(400).json({ message: "Return verification already pending" });
         }
 
-        await borrowRecord.save();
+        // 2. Update Status to Returned
+        borrowRecord.status = 'pending';
+        await borrowRecord.save()
 
-        res.status(200).json({ message: "Book returned successfully" });
+        res.status(200).json({ message: "Return requested. Waiting for admin approval." });
 
     } catch (err) {
         console.error("Return Error:", err);
@@ -119,20 +114,34 @@ exports.returnBook = async (req, res, next) => {
     }
 };
 
-// --- 3. GET USER'S BORROW HISTORY ---
-// exports.getMyBorrows = async (req, res, next) => {
-//     try {
-//         const userId = req.user._id;
+exports.confirmReturn = async (req, res, next) => {
+    try {
+        const { borrowId } = req.body;
         
-//         const borrows = await Borrow.find({ user: userId })
-//             .populate('book', 'title author cover') // Fetch book details nicely
-//             .sort({ createdAt: -1 }); // Newest first
+        const borrowRecord = await Borrow.findById(borrowId);
+        if (!borrowRecord) return res.status(404).json({ message: "Record not found" });
 
-//         res.status(200).json(borrows);
-//     } catch (err) {
-//         next(err);
-//     }
-// };
+        if (borrowRecord.status !== 'pending') {
+            return res.status(400).json({ message: "This record is not pending approval" });
+        }
+
+        // NOW we complete the return
+        borrowRecord.status = 'returned';
+
+        // AND increase the stock
+        const book = await Book.findById(borrowRecord.book);
+        if (book) {
+            book.stock += 1;
+            await book.save();
+        }
+
+        await borrowRecord.save();
+        res.status(200).json({ message: "Return approved and stock updated" });
+
+    } catch (err) {
+        next(err);
+    }
+}
 
 exports.getMyBorrows = async (req, res, next) => {
     try {
