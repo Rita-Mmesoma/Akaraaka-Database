@@ -138,25 +138,12 @@ exports.getMyBorrows = async (req, res, next) => {
     try {
         const userId = req.user._id || req.user.id;
         
-        console.log("---------------- DEBUG START ----------------");
-        console.log("1. I am logged in as User ID:", userId);
 
         // QUERY 1: Try to find matches normally
-        const myBorrows = await Borrow.find({ user: userId });
-        console.log(`2. Search for ${userId} found: ${myBorrows.length} records`);
-
-        // QUERY 2: (Temporary) Fetch ALL borrows to see who owns them
-        const allBorrows = await Borrow.find({});
-        if (allBorrows.length > 0) {
-            console.log("3. SAMPLE RECORD FROM DB (Check the 'user' field):");
-            console.log("   Owner ID in DB:", allBorrows[0].user);
-            console.log("   Logged in ID:  ", userId);
-            console.log("   DO THEY MATCH? ", allBorrows[0].user.toString() === userId.toString());
-        } else {
-            console.log("3. The Borrow Collection is completely empty!");
-        }
-        console.log("---------------- DEBUG END ------------------");
-
+        const myBorrows = await Borrow.find({ user: userId })
+            .populate('book', 'title author cover')
+            .sort({ createdAt: -1 })
+        
         res.status(200).json(myBorrows);
     } catch (err) {
         next(err);
