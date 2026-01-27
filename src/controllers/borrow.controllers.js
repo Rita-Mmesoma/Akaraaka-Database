@@ -89,6 +89,15 @@ exports.returnBook = async (req, res, next) => {
             return res.status(404).json({ message: "Borrow record not found" });
         }
 
+        // --- ADD THESE 5 LINES FOR DEBUGGING ---
+        console.log("---------------- DEBUGGING 403 ERROR ----------------");
+        console.log("Book ID:        ", borrowId);
+        console.log("Book Owner ID:  ", borrowRecord.user.toString());
+        console.log("Current User ID:", userId.toString());
+        console.log("Are they equal? ", borrowRecord.user.toString() === userId.toString());
+        console.log("-----------------------------------------------------");
+        // ------------------------------------
+
         // Security: Ensure the logged-in user owns this borrow record (or is Admin)
         if (borrowRecord.user.toString() !== userId && req.user.role !== 'admin') {
             return res.status(403).json({ message: "Not authorized to return this book" });
