@@ -79,46 +79,60 @@ exports.borrowBook = async (req, res, next) => {
 // --- 2. RETURN A BOOK ---
 exports.returnBook = async (req, res, next) => {
     try {
-        const { borrowId } = req.body; // Expecting { borrowId: "..." }
-        const userId = req.user._id;
+        const { borrowId } = req.body;
 
-        // 1. Find the Borrow Record
+        // 1. Check if Auth Middleware worked
+        console.log("---------------- DEBUG START ----------------");
+        console.log("Logged in User Object:", req.user); // Is this undefined?
+
+        const userId = req.user ? (req.user._id || req.user.id) : undefined;
+        
         const borrowRecord = await Borrow.findById(borrowId);
 
         if (!borrowRecord) {
+            console.log("Error: Borrow Record not found in DB");
             return res.status(404).json({ message: "Borrow record not found" });
         }
 
-        // --- ADD THESE 5 LINES FOR DEBUGGING ---
-        console.log("---------------- DEBUGGING 403 ERROR ----------------");
-        console.log("Book ID:        ", borrowId);
-        console.log("Book Owner ID:  ", borrowRecord.user.toString());
-        console.log("Current User ID:", userId.toString());
-        // console.log("Are they equal? ", borrowRecord.user.toString() === userId.toString());
-        console.log("-----------------------------------------------------");
-        // ------------------------------------
+        console.log("Record found:", borrowRecord._id);
+        console.log("Record Owner field:", borrowRecord.user); // Is this undefined?
+        console.log("My User ID:", userId); // Is this undefined?
 
-        // Security: Ensure the logged-in user owns this borrow record (or is Admin)
-        if (borrowRecord.user.toString() !== userId && req.user.role !== 'admin') {
-            return res.status(403).json({ message: "Not authorized to return this book" });
+        // 2. SAFETY CHECK: Stop if data is missing
+        if (!userId) {
+            console.log("CRASH CAUSE: User ID is missing!");
+            return res.status(401).json({ message: "User ID not found in token" });
+        }
+        if (!borrowRecord.user) {
+            console.log("CRASH CAUSE: Borrow record has no owner!");
+            return res.status(500).json({ message: "Corrupt data: This book has no owner" });
         }
 
+        // 3. Compare (Now safe because we checked above)
+        const isOwner = borrowRecord.user.toString() === userId.toString();
+        const isAdmin = req.user.role === 'admin';
+
+        console.log(`Match? ${isOwner} | Is Admin? ${isAdmin}`);
+        console.log("---------------- DEBUG END ----------------");
+
+        if (!isOwner && !isAdmin) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
+        // ... (Rest of your logic: Check status, Pending, etc.) ...
         if (borrowRecord.status === 'returned') {
-            return res.status(400).json({ message: "This book has already been returned" });
+            return res.status(400).json({ message: "Book already returned" });
         }
-
         if (borrowRecord.status === 'pending') {
             return res.status(400).json({ message: "Return verification already pending" });
         }
 
-        // 2. Update Status to Returned
         borrowRecord.status = 'pending';
-        await borrowRecord.save()
+        await borrowRecord.save();
 
         res.status(200).json({ message: "Return requested. Waiting for admin approval." });
 
     } catch (err) {
-        console.error("Return Error:", err);
         next(err);
     }
 };
