@@ -94,7 +94,7 @@ exports.returnBook = async (req, res, next) => {
         console.log("Book ID:        ", borrowId);
         console.log("Book Owner ID:  ", borrowRecord.user.toString());
         console.log("Current User ID:", userId.toString());
-        console.log("Are they equal? ", borrowRecord.user.toString() === userId.toString());
+        // console.log("Are they equal? ", borrowRecord.user.toString() === userId.toString());
         console.log("-----------------------------------------------------");
         // ------------------------------------
 
