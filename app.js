@@ -29,7 +29,7 @@ app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/categories', categoryRoutes)
 app.use('/api/v1/books', bookRoutes)
 app.use('/api/v1/borrows', borrowRoutes)
-app.use('/api/v1/borrows', adminRoutes)
+app.use('/api/v1/admin', adminRoutes)
 
 app.use((req, res)=> {
     res.status(404).json({ message: 'Not found'})
