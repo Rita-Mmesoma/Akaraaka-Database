@@ -210,4 +210,20 @@ exports.getMyBorrows = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-};
+}
+
+// --- GET ALL BORROWS (ADMIN ONLY) ---
+exports.getAllBorrows = async (req, res, next) => {
+    try {
+        // Fetch all borrow records, populated with user and book details
+        const allBorrows = await Borrow.find()
+            .populate('book', 'title cover stock') // Get book info
+            .populate('user', 'username email')    // Get user info
+            .sort({ createdAt: -1 });              // Newest first
+
+        res.status(200).json(allBorrows);
+    } catch (err) {
+        console.error("Get All Borrows Error:", err);
+        next(err);
+    }
+}

@@ -12,4 +12,6 @@ router.patch('/:id/return', protect, adminOnly, ctrl.markBookReturned);
 
 router.get('/my-history', ctrl.getMyBorrows);
 
+router.get('/', protect, adminOnly, ctrl.getAllBorrows);
+
 module.exports = router;
