@@ -137,21 +137,51 @@ exports.returnBook = async (req, res, next) => {
     }
 };
 
-exports.confirmReturn = async (req, res, next) => {
-    try {
-        const { borrowId } = req.body;
+// exports.confirmReturn = async (req, res, next) => {
+//     try {
+//         const { borrowId } = req.body;
         
-        const borrowRecord = await Borrow.findById(borrowId);
+//         const borrowRecord = await Borrow.findById(borrowId);
+//         if (!borrowRecord) return res.status(404).json({ message: "Record not found" });
+
+//         if (borrowRecord.status !== 'pending') {
+//             return res.status(400).json({ message: "This record is not pending approval" });
+//         }
+
+//         // NOW we complete the return
+//         borrowRecord.status = 'returned';
+
+//         // AND increase the stock
+//         const book = await Book.findById(borrowRecord.book);
+//         if (book) {
+//             book.stock += 1;
+//             await book.save();
+//         }
+
+//         await borrowRecord.save();
+//         res.status(200).json({ message: "Return approved and stock updated" });
+
+//     } catch (err) {
+//         next(err);
+//     }
+// }
+exports.markBookReturned = async (req, res, next) => {
+    try {
+        // 1. GET ID FROM URL (Matches your frontend)
+        const { id } = req.params; 
+        
+        const borrowRecord = await Borrow.findById(id);
         if (!borrowRecord) return res.status(404).json({ message: "Record not found" });
 
-        if (borrowRecord.status !== 'pending') {
-            return res.status(400).json({ message: "This record is not pending approval" });
+        // 2. CHECK IF ALREADY RETURNED
+        if (borrowRecord.status === 'returned') {
+            return res.status(400).json({ message: "Book is already returned" });
         }
 
-        // NOW we complete the return
+        // 3. UPDATE STATUS (Force it to returned, even if it was 'overdue' or 'borrowed')
         borrowRecord.status = 'returned';
-
-        // AND increase the stock
+        
+        // 4. INCREASE STOCK (The logic you liked from confirmReturn)
         const book = await Book.findById(borrowRecord.book);
         if (book) {
             book.stock += 1;
@@ -159,7 +189,7 @@ exports.confirmReturn = async (req, res, next) => {
         }
 
         await borrowRecord.save();
-        res.status(200).json({ message: "Return approved and stock updated" });
+        res.status(200).json({ message: "Book returned and stock updated" });
 
     } catch (err) {
         next(err);
