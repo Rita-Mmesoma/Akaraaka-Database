@@ -8,7 +8,7 @@ router.post('/', ctrl.borrowBook);
 
 router.put('/return', ctrl.returnBook);
 
-router.patch('/:id/return', protect, adminOnly, borrowController.markBookReturned);
+router.patch('/:id/return', protect, adminOnly, ctrl.markBookReturned);
 
 router.get('/my-history', ctrl.getMyBorrows);
 
