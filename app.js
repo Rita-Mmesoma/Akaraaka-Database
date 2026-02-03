@@ -10,6 +10,7 @@ const categoryRoutes = require('./src/routes/category.routes');
 const bookRoutes = require('./src/routes/book.routes');
 const borrowRoutes = require('./src/routes/borrow.routes');
 const adminRoutes = require('./src/routes/admin.routes')
+const userRoutes = require('./src/routes/user.routes')
 
 const app = express()
 
@@ -19,8 +20,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 }))
-//Handle preflight requests
-// app.options("*", cors());
+
 
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
@@ -30,6 +30,7 @@ app.use('/api/v1/categories', categoryRoutes)
 app.use('/api/v1/books', bookRoutes)
 app.use('/api/v1/borrows', borrowRoutes)
 app.use('/api/v1/admin', adminRoutes)
+app.use('/api/v1/user', userRoutes)
 
 app.use((req, res)=> {
     res.status(404).json({ message: 'Not found'})
