@@ -11,6 +11,7 @@ const bookRoutes = require('./src/routes/book.routes');
 const borrowRoutes = require('./src/routes/borrow.routes');
 const adminRoutes = require('./src/routes/admin.routes')
 const userRoutes = require('./src/routes/user.routes')
+const reportRoutes = require('./src/routes/report.routes')
 
 const app = express()
 
@@ -31,6 +32,7 @@ app.use('/api/v1/books', bookRoutes)
 app.use('/api/v1/borrows', borrowRoutes)
 app.use('/api/v1/admin', adminRoutes)
 app.use('/api/v1/user', userRoutes)
+app.use('/api/v1/reports', reportRoutes)
 
 app.use((req, res)=> {
     res.status(404).json({ message: 'Not found'})
