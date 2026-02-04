@@ -47,13 +47,26 @@ exports.getDashboardReports = async (req, res, next) => {
                 },
                 { $unwind: "$bookInfo" },
                 {
+                    $lookup: {
+                        from: "categories", 
+                        localField: "bookInfo.category",
+                        foreignField: "_id",
+                        as: "categoryInfo"
+                    }
+                },
+                { 
+                    $unwind: {
+                        path: "$categoryInfo",
+                        preserveNullAndEmptyArrays: true 
+                    } 
+                },
+                {
                     $group: {
-                        _id: "$bookInfo.category",
+                        _id: { $ifNull: ["$categoryInfo.name", "$bookInfo.category"] }, 
                         count: { $sum: 1 }
                     }
                 },
                 { $sort: { count: -1 } },
-                { $limit: 5 } 
             ]),
 
             User.aggregate([
