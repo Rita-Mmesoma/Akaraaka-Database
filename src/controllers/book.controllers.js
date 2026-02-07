@@ -1,5 +1,6 @@
 const Book = require('../models/Book')
 const { applyAPIFeatures } = require('../utils/apiFeatures')
+const SearchLog = require('../models/SearchLog')
 
 exports.createBook = async (req, res, next) => {
     try{
@@ -25,18 +26,6 @@ exports.createBook = async (req, res, next) => {
     }
 }
 
-// exports.updateBook = async (req, res, next) => {
-//     try{
-//         const updated = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true })
-//         if(!updated){
-//             return res.status(404).json({ message: 'Not found' })
-//         }
-//         res.json(updated)
-//     }catch(err){
-//         console.log('updateBook book.controller', err)
-//         next(err)
-//     }
-// }
 exports.updateBook = async (req, res, next) => {
     try {
         const bookId = req.params.id;
@@ -111,7 +100,23 @@ exports.getBooks = async (req, res, next) =>{
             Book.countDocuments(baseFilter)
         ])
 
+        if (search && search.trim().length > 0) {
+            // I used a separate try/catch block here so that if logging fails,
+            // it does NOT crash the app or stop the user from seeing their books.
+            try {
+                await SearchLog.create({
+                    query: search,
+                    user: req.user ? req.user._id : null,
+                    resultsCount: total // I saved how many books were found
+                });
+            } catch (logErr) {
+                // Just log the error internally and continue
+                console.error("Search logging failed:", logErr.message);
+            }
+        }
+
         res.json({
+            status: 'success',
             page: Number(page) || 1,
             limit: lim,
             total,
