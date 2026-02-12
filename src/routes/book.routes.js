@@ -4,7 +4,7 @@ const { protect } = require('../middleware/auth')
 const { isAdmin } = require('../middleware/roles')
 const ctrl = require('../controllers/book.controllers')
 
-router.get('/', protect, ctrl.getBooks)
+router.get('/', ctrl.getBooks)
 router.get('/:id', ctrl.getBookById)
 router.post('/', protect, isAdmin, upload.single('cover'), ctrl.createBook)
 router.patch('/:id', protect, isAdmin, upload.single('cover'), ctrl.updateBook)
